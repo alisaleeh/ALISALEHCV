@@ -1,0 +1,733 @@
+<!-- Chosen Palette: Calm Neutrals (White, Gray, Emerald) -->
+<!-- Application Structure Plan: Single-page app with 'About', 'Skills', 'Projects' sections. Navigation via smooth-scrolling header. 'Projects' section is the focus, featuring a filterable grid of cards (All/Completed/In Progress). Clicking a card opens a modal with detailed project info. This structure prioritizes project exploration and progressive disclosure over a linear CV, making it more engaging and user-friendly. -->
+<!-- Visualization & Content Choices: Skills -> Inform -> HTML/CSS Grid -> Click interaction (modal) -> Justification: More interactive than static list. Projects -> Organize/Inform -> HTML/CSS Card Grid + Modal -> Filter/Click interaction -> Justification: Manages large number of projects, allows user to drill down into details they care about. Educational Platform -> Inform -> Modal Detail -> Click -> Justification: Highlights current, complex work. NO charts needed as data is qualitative. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali Saleh - Flutter Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        .modal {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .modal.is-open {
+            display: flex;
+        }
+        .modal-content {
+            animation: slideInUp 0.4s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .tab-active {
+            border-color: #059669;
+            color: #059669;
+            font-weight: 600;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, .1);
+            border-left-color: #059669;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header / Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0">
+                    <a href="#about" class="text-2xl font-bold text-emerald-700">Ali Saleh</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#about" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">About</a>
+                        <a href="#skills" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">Skills</a>
+                        <a href="#projects" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">Projects</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#about" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">About</a>
+                <a href="#skills" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">Skills</a>
+                <a href="#projects" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">Projects</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- About Section -->
+        <section id="about" class="py-20 md:py-28 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900">Hi, I'm Ali Saleh</h1>
+                <p class="mt-4 text-xl md:text-2xl font-medium text-emerald-700">Flutter Developer</p>
+                <p class="mt-6 max-w-3xl mx-auto text-lg text-gray-600">
+                    A passionate and skilled Flutter developer currently in my third year at Latakia University. I have a strong foundation in OOP, data structures, and problem-solving, with hands-on experience building a diverse portfolio of mobile applications.
+                </p>
+                <div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-6">
+                    <div class="p-6 bg-gray-50 rounded-xl w-full sm:w-auto">
+                        <h3 class="text-lg font-semibold text-gray-800">Contact Me</h3>
+                        <p class="mt-2 text-gray-600">alisaleeb14@gmail.com</p>
+                        <p class="mt-1 text-gray-600">0982538160</p>
+                        <p class="mt-1 text-gray-600">Syria / Latakia</p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-xl w-full sm:w-auto">
+                        <h3 class="text-lg font-semibold text-gray-800">Education</h3>
+                        <p class="mt-2 text-gray-600">Degree/third year student</p>
+                        <p class="mt-1 text-gray-600">Latakia University, Syria</p>
+                    </div>
+                </div>
+
+                <!-- Gemini AI Pitch Generator -->
+                <div class="mt-12 max-w-3xl mx-auto">
+                    <div id="ai-pitch-card" class="bg-emerald-50 rounded-xl shadow-lg p-6 text-left border border-emerald-200">
+                        <h3 class="text-xl font-bold text-emerald-800">✨ AI-Powered Hiring Pitch</h3>
+                        <p class="text-emerald-700 mt-2">Wondering why I'm the right fit for your team? Click the button and let AI summarize my qualifications based on this portfolio.</p>
+                        <div id="pitch-content-area" class="mt-4 min-h-[50px]">
+                            <button id="generate-pitch-button" class="bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-700 transition-all">
+                                Generate AI Pitch
+                            </button>
+                            <!-- Loading and response will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-20 md:py-28 bg-gray-50">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900">My Skills</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
+                        I specialize in building high-performance mobile applications using the latest technologies and architectural patterns.
+                    </p>
+                </div>
+                <div class="mt-16 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div class="skill-card bg-white p-6 rounded-xl shadow-md text-center cursor-pointer hover:shadow-lg transition-shadow">
+                        <span class="text-4xl">📱</span>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800">Flutter</h3>
+                        <p class="mt-1 text-gray-600">Primary development framework</p>
+                    </div>
+                    <div class="skill-card bg-white p-6 rounded-xl shadow-md text-center cursor-pointer hover:shadow-lg transition-shadow">
+                        <span class="text-4xl">🏛️</span>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800">MVVM</h3>
+                        <p class="mt-1 text-gray-600">Architectural Pattern</p>
+                    </div>
+                    <div class="skill-card bg-white p-6 rounded-xl shadow-md text-center cursor-pointer hover:shadow-lg transition-shadow">
+                        <span class="text-4xl">📦</span>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800">Cubit</h3>
+                        <p class="mt-1 text-gray-600">State Management</p>
+                    </div>
+                    <div class="skill-card bg-white p-6 rounded-xl shadow-md text-center cursor-pointer hover:shadow-lg transition-shadow">
+                        <span class="text-4xl">🧠</span>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800">Problem Solving</h3>
+                        <p class="mt-1 text-gray-600">Codeforces Competitor</p>
+                    </div>
+                    <div class="skill-card bg-white p-6 rounded-xl shadow-md text-center cursor-pointer hover:shadow-lg transition-shadow">
+                        <span class="text-4xl">🎯</span>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800">Dart</h3>
+                        <p class="mt-1 text-gray-600">Primary Language</p>
+                    </div>
+                    <div class="skill-card bg-white p-6 rounded-xl shadow-md text-center cursor-pointer hover:shadow-lg transition-shadow">
+                        <span class="text-4xl">☕</span>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800">Java</h3>
+                        <p class="mt-1 text-gray-600">Strong Foundation</p>
+                    </div>
+                    <div class="skill-card bg-white p-6 rounded-xl shadow-md text-center cursor-pointer hover:shadow-lg transition-shadow">
+                        <span class="text-4xl">++</span>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800">C++</h3>
+                        <p class="mt-1 text-gray-600">Algorithmic Problem Solving</p>
+                    </div>
+                    <div class="skill-card bg-white p-6 rounded-xl shadow-md text-center cursor-pointer hover:shadow-lg transition-shadow">
+                        <span class="text-4xl">📐</span>
+                        <h3 class="mt-4 text-xl font-semibold text-gray-800">OOP</h3>
+                        <p class="mt-1 text-gray-600">Object-Oriented Programming</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 md:py-28 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900">My Projects</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
+                        Here is a selection of projects I've built, ranging from utility apps to complex platforms. Click on any project to learn more.
+                    </p>
+                </div>
+
+                <!-- Project Filters -->
+                <div class="mt-12">
+                    <div class="flex justify-center border-b border-gray-200">
+                        <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                            <button class="tab-filter tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-filter="all">
+                                All Projects
+                            </button>
+                            <button class="tab-filter text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm" data-filter="in-progress">
+                                In Progress
+                            </button>
+                            <button class="tab-filter text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm" data-filter="completed">
+                                Completed
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Project Grid -->
+                <div id="project-grid" class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Projects will be dynamically injected here by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center">
+            <p>&copy; 2025 Ali Saleh. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Project Modal -->
+    <div id="project-modal" class="modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" style="display: none;">
+        <div class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center p-6 border-b border-gray-200 sticky top-0 bg-white">
+                <h3 id="modal-title" class="text-2xl font-bold text-gray-900">Project Title</h3>
+                <button id="modal-close-button" class="text-gray-400 hover:text-gray-600">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <div id="modal-gallery" class="mb-6">
+                    <!-- Screenshot gallery will be injected here -->
+                </div>
+                <div id="modal-tags" class="flex flex-wrap gap-2 mb-4">
+                    <!-- Tags will be injected here -->
+                </div>
+                <div id="modal-description" class="text-gray-700 space-y-4">
+                    <!-- Description will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skill Modal -->
+    <div id="skill-modal" class="modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" style="display: none;">
+        <div class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-lg">
+            <div class="flex justify-between items-center p-6 border-b border-gray-200">
+                <h3 id="skill-modal-title" class="text-2xl font-bold text-gray-900">Skill</h3>
+                <button id="skill-modal-close-button" class="text-gray-400 hover:text-gray-600">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <div id="skill-explanation-content" class="text-gray-700 space-y-4 min-h-[100px]">
+                    <p>Click the button below to get a simple AI-powered explanation of this skill.</p>
+                </div>
+                <button id="explain-skill-button" class="mt-4 bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-700 transition-all">
+                    ✨ Explain this Skill with AI
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Gemini API Configuration ---
+            const API_KEY = ""; // Leave empty
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+            
+            // --- Exponential Backoff Fetch ---
+            async function fetchWithBackoff(url, options, retryCount = 0) {
+                const maxRetries = 5;
+                const delay = Math.pow(2, retryCount) * 1000 + Math.random() * 1000;
+
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        if (response.status === 429 && retryCount < maxRetries) {
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            return fetchWithBackoff(url, options, retryCount + 1);
+                        }
+                        throw new Error(`API request failed with status ${response.status}`);
+                    }
+                    return response.json();
+                } catch (error) {
+                    if (retryCount < maxRetries) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return fetchWithBackoff(url, options, retryCount + 1);
+                    }
+                    throw error;
+                }
+            }
+
+            // --- Call Gemini API ---
+            async function callGemini(systemPrompt, userQuery) {
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    systemInstruction: {
+                        parts: [{ text: systemPrompt }]
+                    },
+                };
+
+                try {
+                    const result = await fetchWithBackoff(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts[0].text) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error("Invalid response structure from API.");
+                    }
+                } catch (error) {
+                    return "Error: Unable to get a response from the AI. Please try again later.";
+                }
+            }
+
+            // --- Project Data ---
+            const projects = [
+                {
+                    id: 'edu-platform',
+                    title: 'Educational Platform Application',
+                    category: 'in-progress',
+                    tags: ['Flutter', 'Cubit', 'MVVM', 'Confidential'],
+                    screenshots: [
+                        'https://placehold.co/600x400/eeeeee/999999?text=Confidential+Screenshot'
+                    ],
+                    short_desc: 'A complex application to manage the entire student lifecycle for an educational institute.',
+                    description: `
+                        <p class="font-semibold text-lg text-gray-800">Confidential Project</p>
+                        <p>Currently developing a complex application for an educational institute. The app is designed to manage the entire student lifecycle, including:</p>
+                        <ul class="list-disc list-inside space-y-2 mt-4">
+                            <li>A secure authentication system with mandatory, detailed profile creation.</li>
+                            <li>A dynamic course catalog supporting Online, In-Person, and Offline (Recorded) learning modes, with QR code enrollment.</li>
+                            <li>A sophisticated student onboarding process, featuring placement tests and flexible scheduling based on student readiness.</li>
+                            <li>Personalized learning roadmaps delivering course materials (PDFs, videos), quizzes, and in-app meeting booking with instructors.</li>
+                            <li>A comprehensive financial module for students to track invoices, payment history, and remaining balances.</li>
+                            <li>A robust notification system for administrative alerts, test results, and payment reminders.</li>
+                        </ul>
+                    `
+                },
+                {
+                    id: 'hourie-wazzan',
+                    title: 'Hourie & Wazzan',
+                    category: 'completed',
+                    tags: ['Flutter', 'Logistics', 'API Integration'],
+                    screenshots: [
+                        'https://i.ibb.co/BVfL8YBM/wazzan-1.png',
+                        'https://i.ibb.co/qMwQS6H4/wazzan-2.png',
+                        'https://i.ibb.co/WvPkTRf8/wazzan-3.png',
+                        'https://i.ibb.co/r2qrRHwS/wazzan-4.png',
+                        'https://i.ibb.co/nMyQ6Z0n/wazzan-5.png',
+                        'https://i.ibb.co/MyNjhv53/wazzan-6.png',
+                        'https://i.ibb.co/bMNSkfhv/wazzan-7.png',
+                        'https://i.ibb.co/BHGrPkyJ/wazzan-8.png',
+                        'https://i.ibb.co/nMY9tt6p/wazzan-9.png'
+                    ],
+                    short_desc: 'A logistics application for a shipping company offering land, sea, and air freight services.',
+                    description: `
+                        <p>A logistics application for a shipping company that offers land, sea, and air freight services. The app showcases all available services, with its core functionality being a shipment itinerary viewer.</p>
+                        <p class="mt-4">Users can enter their container number to view their shipment's planned route, including the start point, end point, and all intermediary cities, ports, and scheduled dates. The application also includes a feature for direct communication with the company.</p>
+                    `
+                },
+                {
+                    id: 'athar-app',
+                    title: 'Athar App',
+                    category: 'completed',
+                    tags: ['Flutter', 'Cubit', 'User Contributions', 'History'],
+                    screenshots: [],
+                    short_desc: 'An engaging mobile application that allows users to explore historical events.',
+                    description: `
+                        <p>An engaging mobile application that allows users to explore historical events based on a user-selected date, with support for both Gregorian and Hijri calendars.</p>
+                        <p class="mt-4">The app fosters community contribution by enabling users to add new historical events, complete with descriptions, images, and videos. It also features a dynamic quotes section where users can discover random quotes and contribute their own.</p>
+                        <p class="mt-4 font-medium text-emerald-700">Now available on the Google Play Store!</p>
+                        
+                        <a href="https://play.google.com/store/apps/details?id=com.athar.athar&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-gray-900 text-white font-bold py-2 px-5 rounded-lg hover:bg-gray-700 transition-all mt-6 shadow-lg">
+                            <svg class="inline-block w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M325.3 234.3L104.6 13l280.8 161.2-59.9 60.1zM47 0C34 6.8 25.3 19.2 25.3 33.3v445.3c0 14.1 8.7 26.5 21.7 33.3l257.2-257.2L47 0zm338.5 234.3L37.2 479l280.8-161.2 59.9-60.1zM325.3 277.7l104.6 60.1-280.8 161.2 236.1-221.3z"/></svg>
+                            <span>View on<br><span class="text-lg -mt-1 block">Google Play</span></span>
+                        </a>
+                    `
+                },
+                {
+                    id: 'xpdf-app',
+                    title: 'Xpdf App',
+                    category: 'completed',
+                    tags: ['Flutter', 'Utilities', 'PDF', 'Google Ads'],
+                    screenshots: [
+                        'https://i.ibb.co/9kKY3xY4/xpdf-1.png',
+                        'https://i.ibb.co/D3P2Y31/xpdf-2.png',
+                        'https://i.ibb.co/Jj3HNqDV/xpdf-3.png',
+                        'https://i.ibb.co/mrK2bNhR/xpdf-4.png',
+                        'https://i.ibb.co/WvsN9L6R/xpdf-5.png',
+                        'https://i.ibb.co/3yTQwYJQ/xpdf-6.png',
+                        'https://i.ibb.co/Z626rZTw/xpdf-7.png',
+                        'https://i.ibb.co/qMDf169Q/xpdf-8.png',
+                        'https://i.ibb.co/fVy2LF0V/xpdf-9.png'
+                    ],
+                    short_desc: 'A comprehensive PDF utility application offering a suite of tools for document management.',
+                    description: `
+                        <p>A comprehensive PDF utility application offering a suite of tools for managing and converting documents. Key features include:</p>
+                        <ul class="list-disc list-inside space-y-2 mt-4">
+                            <li>Viewing PDFs</li>
+                            <li>Merging multiple PDF files</li>
+                            <li>Converting images to PDF</li>
+                            <li>Exporting PDF pages to images</li>
+                            <li>Converting EPUB files to PDF</li>
+                        </ul>
+                        <p class="mt-4">The app is monetized using Google Ads integration.</p>
+                    `
+                },
+                {
+                    id: 'bookly-app',
+                    title: 'Bookly App',
+                    category: 'completed',
+                    tags: ['Flutter', 'Cubit', 'MVVM', 'E-commerce'],
+                    screenshots: [],
+                    short_desc: 'A mobile application that displays various books, built with Cubit and MVVM.',
+                    description: `
+                        <p>Bookly app is a mobile application build with Cubit state managment, this app Displays various books, Every book has details, The user can view the book or purchase it.</p>
+                        <p class="mt-4">I built this app after taking the Flutter Advanced Course (Bloc and MVVM Pattern) with Tharwat Sami.</p>
+                    `
+                },
+                {
+                    id: 'reserve-me-app',
+                    title: 'Reserve Me App',
+                    category: 'completed',
+                    tags: ['Flutter', 'Cubit', 'Reservation System'],
+                    screenshots: [
+                        'https://i.ibb.co/V0tCghMz/photo-2025-03-18-01-50-54.jpg',
+                        'https://i.ibb.co/4RFQNKWR/photo-2025-03-18-01-50-56.jpg',
+                        'https://i.ibb.co/N255tmBn/photo-2025-03-18-01-51-01.jpg',
+                        'https://i.ibb.co/KpVJ35L3/photo-2025-03-18-01-51-07.jpg',
+                        'https://i.ibb.co/FLHT46Y7/photo-2025-03-18-01-51-24.jpg'
+                    ],
+                    short_desc: 'An application for reserving tables in restaurants, showing availability by time and party size.',
+                    description: `
+                        <p>Reserve me app is a mobile application build with Cubit state managment. It is an application for reserving a table in a restaurant that displays many restaurants, and each restaurant contains details such as rating, location, and available meals with their prices and pictures.</p>
+                        <p class="mt-4">The application also shows you the available tables according to the number of people and according to the time specified by the user.</p>
+                    `
+                },
+                {
+                    id: 'news-app',
+                    title: 'News App',
+                    category: 'completed',
+                    tags: ['Flutter', 'API Integration', 'News'],
+                    screenshots: [],
+                    short_desc: 'An application that displays daily general news, filterable by categories.',
+                    description: `
+                        <p>An application that displays daily general news. The application contains categories, each category has its own news, such as science, sports, and entertainment.</p>
+                    `
+                },
+                {
+                    id: 'online-store',
+                    title: 'Online Store',
+                    category: 'completed',
+                    tags: ['Flutter', 'E-commerce', 'Simple'],
+                    screenshots: [],
+                    short_desc: 'A simple online store that displays a variety of products with modification capabilities.',
+                    description: `
+                        <p>A simple online store that displays a variety of products, with each product having a name, price, and picture, with the ability to modify the details of each product.</p>
+                    `
+                }
+            ];
+
+            // --- DOM Elements ---
+            const projectGrid = document.getElementById('project-grid');
+            const projectModal = document.getElementById('project-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDescription = document.getElementById('modal-description');
+            const modalTags = document.getElementById('modal-tags');
+            const modalGallery = document.getElementById('modal-gallery');
+            const modalCloseButton = document.getElementById('modal-close-button');
+            
+            const skillCards = document.querySelectorAll('.skill-card');
+            const skillModal = document.getElementById('skill-modal');
+            const skillModalTitle = document.getElementById('skill-modal-title');
+            const skillModalCloseButton = document.getElementById('skill-modal-close-button');
+            const skillExplanationContent = document.getElementById('skill-explanation-content');
+            const explainSkillButton = document.getElementById('explain-skill-button');
+
+            const generatePitchButton = document.getElementById('generate-pitch-button');
+            const pitchContentArea = document.getElementById('pitch-content-area');
+
+            const tabFilters = document.querySelectorAll('.tab-filter');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            let currentSkillToExplain = '';
+
+            // --- Functions ---
+
+            // Function to render projects
+            function renderProjects(filter = 'all') {
+                projectGrid.innerHTML = '';
+                const filteredProjects = projects.filter(p => filter === 'all' || p.category === filter);
+
+                if (filteredProjects.length === 0) {
+                     projectGrid.innerHTML = `<p class="text-gray-600 text-center col-span-full">No projects in this category yet.</p>`;
+                     return;
+                }
+
+                filteredProjects.forEach(project => {
+                    const card = document.createElement('div');
+                    card.className = 'project-card bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105';
+                    card.setAttribute('data-project-id', project.id);
+                    card.innerHTML = `
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-900">${project.title}</h3>
+                            <p class="mt-2 text-gray-600">${project.short_desc}</p>
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                ${project.tags.map(tag => `<span class="text-xs font-medium bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">${tag}</span>`).join('')}
+                            </div>
+                            <p class="mt-5 text-sm font-semibold text-emerald-600 hover:text-emerald-500">Read More &rarr;</p>
+                        </div>
+                    `;
+                    projectGrid.appendChild(card);
+                });
+            }
+
+            // Function to show project modal
+            function showProjectModal(projectId) {
+                const project = projects.find(p => p.id === projectId);
+                if (!project) return;
+
+                modalTitle.textContent = project.title;
+
+                modalGallery.innerHTML = '';
+                if (project.screenshots && project.screenshots.length > 0) {
+                    let galleryHTML = '<h4 class="text-lg font-semibold text-gray-800 mb-3">Screenshots</h4>';
+                    galleryHTML += `<div class="grid grid-cols-1 ${project.screenshots.length > 1 ? 'sm:grid-cols-2' : ''} gap-4">`;
+                    project.screenshots.forEach(url => {
+                        galleryHTML += `
+                            <div>
+                                <img src="${url}" alt="Project screenshot" class="rounded-lg shadow-md w-full h-auto" onerror="this.src='https://placehold.co/600x400/f87171/ffffff?text=Image+Not+Found'; this.onerror=null;">
+                            </div>
+                        `;
+                    });
+                    galleryHTML += '</div>';
+                    modalGallery.innerHTML = galleryHTML;
+                }
+                
+                modalDescription.innerHTML = project.description;
+                modalTags.innerHTML = project.tags.map(tag => `<span class="text-sm font-medium bg-gray-100 text-gray-700 px-3 py-1 rounded-full">${tag}</span>`).join('');
+                
+                projectModal.style.display = 'flex'; // Force show
+                projectModal.classList.add('is-open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Function to close project modal
+            function closeProjectModal() {
+                projectModal.classList.remove('is-open');
+                projectModal.style.display = 'none'; // Force hide
+                document.body.style.overflow = 'auto';
+            }
+
+            // Function to show skill modal
+            function showSkillModal(skillName) {
+                currentSkillToExplain = skillName;
+                skillModalTitle.textContent = skillName;
+                skillExplanationContent.innerHTML = '<p>Click the button below to get a simple AI-powered explanation of this skill.</p>';
+                explainSkillButton.disabled = false;
+                explainSkillButton.textContent = '✨ Explain this Skill with AI';
+                skillModal.style.display = 'flex'; // Force show
+                skillModal.classList.add('is-open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Function to close skill modal
+            function closeSkillModal() {
+                skillModal.classList.remove('is-open');
+                skillModal.style.display = 'none'; // Force hide
+                document.body.style.overflow = 'auto';
+                currentSkillToExplain = '';
+            }
+
+            // --- Gemini Feature Handlers ---
+
+            async function handleGeneratePitch() {
+                generatePitchButton.disabled = true;
+                pitchContentArea.innerHTML = '<div class="spinner mx-auto"></div>';
+
+                try {
+                    const skills = projects.flatMap(p => p.tags).concat(['Flutter', 'MVVM', 'Cubit', 'Problem Solving', 'Dart', 'Java', 'C++', 'OOP']);
+                    const uniqueSkills = [...new Set(skills)].join(', ');
+                    const projectTitles = projects.map(p => p.title).join(', ');
+
+                    const systemPrompt = "You are an expert career coach. Your task is to write a concise, professional, and enthusiastic hiring pitch (about 100 words) for a Flutter developer named Ali Saleh, based on his skills and project list. Respond in English.";
+                    const userQuery = `Ali's skills include: ${uniqueSkills}. His projects include: ${projectTitles}. Based on this, write a 100-word pitch for why a company should hire him.`;
+
+                    const response = await callGemini(systemPrompt, userQuery);
+                    
+                    pitchContentArea.innerHTML = `<p class="text-emerald-800">${response.replace(/\n/g, '<br>')}</p>`;
+                    generatePitchButton.textContent = 'Regenerate Pitch';
+                } catch (error) {
+                    pitchContentArea.innerHTML = `<p class="text-red-600 font-medium">An error occurred. Please try again later.</p>`;
+                } finally {
+                    generatePitchButton.disabled = false;
+                }
+            }
+
+            async function handleExplainSkill() {
+                if (!currentSkillToExplain) return;
+
+                explainSkillButton.disabled = true;
+                skillExplanationContent.innerHTML = '<div class="spinner mx-auto"></div>';
+
+                try {
+                    const systemPrompt = "You are a helpful assistant explaining technical concepts to a non-technical recruiter. Keep your explanation to 2-3 short sentences. Respond in English.";
+                    const userQuery = `In 2-3 short sentences, what is "${currentSkillToExplain}" in the context of software development?`;
+
+                    const response = await callGemini(systemPrompt, userQuery);
+
+                    skillExplanationContent.innerHTML = `<p>${response.replace(/\n/g, '<br>')}</p>`;
+                } catch (error) {
+                    skillExplanationContent.innerHTML = `<p class="text-red-600 font-medium">An error occurred. Please try again later.</p>`;
+                } finally {
+                    explainSkillButton.disabled = false;
+                }
+            }
+
+
+            // --- Event Listeners ---
+
+            // Initial render
+            renderProjects('all');
+
+            // Project filter tabs
+            tabFilters.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabFilters.forEach(t => t.classList.remove('tab-active', 'text-gray-500', 'hover:text-gray-700'));
+                    tabFilters.forEach(t => {
+                        t.classList.add('text-gray-500', 'hover:text-gray-700');
+                        t.classList.remove('tab-active');
+                    });
+                    tab.classList.add('tab-active');
+                    tab.classList.remove('text-gray-500', 'hover:text-gray-700');
+                    
+                    renderProjects(tab.dataset.filter);
+                });
+            });
+
+            // Project card click
+            projectGrid.addEventListener('click', (e) => {
+                const card = e.target.closest('.project-card');
+                if (card) {
+                    showProjectModal(card.dataset.projectId);
+                }
+            });
+
+            // Project Modal close
+            modalCloseButton.addEventListener('click', closeProjectModal);
+            projectModal.addEventListener('click', (e) => {
+                if (e.target === projectModal) {
+                    closeProjectModal();
+                }
+            });
+
+            // Skill Card click
+            skillCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const skillName = card.querySelector('h3').textContent;
+                    showSkillModal(skillName);
+                });
+            });
+
+            // Skill Modal close
+            skillModalCloseButton.addEventListener('click', closeSkillModal);
+            skillModal.addEventListener('click', (e) => {
+                if (e.target === skillModal) {
+                    closeSkillModal();
+                }
+            });
+
+            // Gemini button listeners
+            generatePitchButton.addEventListener('click', handleGeneratePitch);
+            explainSkillButton.addEventListener('click', handleExplainSkill);
+
+            // Close modals with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (projectModal.classList.contains('is-open')) {
+                        closeProjectModal();
+                    }
+                    if (skillModal.classList.contains('is-open')) {
+                        closeSkillModal();
+                    }
+                }
+            });
+
+            // Smooth scroll navigation
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    document.querySelector(targetId).scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    if (mobileMenu.classList.contains('hidden') === false) {
+                        mobileMenu.classList.add('hidden');
+                        mobileMenuButton.querySelector('svg:first-child').classList.remove('hidden');
+                        mobileMenuButton.querySelector('svg:last-child').classList.add('hidden');
+                    }
+                });
+            });
+
+            // Mobile menu toggle
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                mobileMenuButton.querySelector('svg:first-child').classList.toggle('hidden');
+                mobileMenuButton.querySelector('svg:last-child').classList.toggle('hidden');
+            });
+
+        });
+    </script>
+</body>
+</html>
